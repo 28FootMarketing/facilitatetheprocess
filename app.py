@@ -1,3 +1,4 @@
+
 import streamlit as st
 import openai
 import os
@@ -99,8 +100,10 @@ with tab2:
 # ✅ Tab 3 – PDF + Timeline
 with tab3:
     st.header("📄 Download Your AI-Powered Recruiting Report")
-    full_chat = "This is your full chat transcript..."  # ✅ Add closing quote
+    
+    full_chat = "
 ".join([f"{m['role'].capitalize()}: {m['content']}" for m in st.session_state.messages[1:]])
+.capitalize()}: {m['content']}" for m in st.session_state.messages[1:]])
 
     if st.button("📥 Generate PDF"):
         pdf_bytes = generate_pdf_from_chat(
