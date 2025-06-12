@@ -9,10 +9,7 @@ from utils.logic import recommend_package, calculate_strength_score
 from utils.summary import build_summary
 from utils.pdf_generator import generate_pdf_from_chat
 
-# ✅ Load environment variables
 load_dotenv()
-
-# ✅ Assign OpenAI key
 api_key = st.secrets.get("OPENAI_API_KEY") or os.getenv("OPENAI_API_KEY")
 if not api_key:
     st.error("🚫 OpenAI API key is missing.")
@@ -20,10 +17,8 @@ if not api_key:
 openai.api_key = api_key
 client = openai.OpenAI()
 
-# ✅ Streamlit page config
 st.set_page_config(page_title="ScoutBot Recruiting Assistant", layout="wide")
 
-# ✅ Define agents
 AGENTS = {
     "Jordan": {"emoji": "🏀", "system_prompt": "You are Jordan, the motivator..."},
     "Kobe": {"emoji": "🐍", "system_prompt": "You are Kobe, the discipline coach..."},
@@ -59,47 +54,25 @@ tab1, tab2, tab3, tab4, tab5, tab6, tab7 = st.tabs([
     "📊 Step 7: Daily Tracker (Candace)"
 ])
 
-with tab1:
-    st.header("📋 Step 1: Build Your Recruiting Profile")
-    with st.form("recruiting_form"):
-        st.session_state.name = st.text_input("First Name", value=st.session_state.name)
-        st.session_state.sport = st.text_input("Your Sport", value=st.session_state.sport)
-        st.session_state.grade = st.selectbox("Grade", ["8th", "9th", "10th", "11th", "12th", "Post-grad"])
-        st.session_state.gpa = st.number_input("GPA", 0.0, 4.5, step=0.1)
-        st.session_state.motivation = st.slider("Motivation (1–10)", 1, 10, 5)
-        st.session_state.outreach = st.radio("Have you contacted coaches?", ["Yes", "No"])
-        st.subheader("🎯 Athletic Stats")
-        st.session_state.stat1 = st.number_input("Stat 1", step=0.1)
-        st.session_state.stat2 = st.number_input("Stat 2", step=0.1)
-        st.session_state.stat3 = st.number_input("Stat 3", step=0.1)
-        st.session_state.video_link = st.text_input("🎥 Highlight Video Link")
-        if st.form_submit_button("🔒 Save Info"):
-            st.success("✅ Info saved.")
-
 with tab2:
     selected_agent = st.session_state.selected_agent
     st.header(f"{AGENTS[selected_agent]['emoji']} Chat with {selected_agent}")
     user_input = st.chat_input(f"What do you want to ask {selected_agent}?")
     if user_input:
         st.session_state.messages.append({"role": "user", "content": user_input})
+        for msg in st.session_state.messages:
+            if "role" not in msg or "content" not in msg:
+                st.error("❌ Invalid message format.")
+                st.stop()
         with st.spinner(f"{selected_agent} is responding..."):
-            response = client.chat.completions.create(
-                model="gpt-4o",
-                messages=st.session_state.messages
-            )
-            reply = response.choices[0].message.content
-            st.session_state.messages.append({"role": "assistant", "content": reply})
+            try:
+                response = client.chat.completions.create(
+                    model="gpt-4o",
+                    messages=st.session_state.messages
+                )
+                reply = response.choices[0].message.content
+                st.session_state.messages.append({"role": "assistant", "content": reply})
+            except Exception as e:
+                st.error(f"🚫 OpenAI API call failed: {e}")
     for msg in st.session_state.messages[1:]:
         st.chat_message(msg["role"]).markdown(msg["content"])
-
-with tab3:
-    st.header("📄 Download Your AI-Powered Recruiting Report")
-    full_chat = "\n".join([f"{m['role'].capitalize()}: {m['content']}" for m in st.session_state.messages[1:]])
-    if st.button("📥 Generate PDF"):
-        pdf_bytes = generate_pdf_from_chat(
-            name=st.session_state.name,
-            sport=st.session_state.sport,
-            video_link=st.session_state.video_link,
-            chat_transcript=full_chat
-        )
-        st.download_button("⬇️ Download Report", data=pdf_bytes, file_name=f"{st.session_state.name}_recruiting_plan.pdf")
