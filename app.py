@@ -1,6 +1,32 @@
 import streamlit as st
 import openai
 import os
+import streamlit as st
+import openai
+import os
+
+# Show diagnostic info (⚠️ Remove this after testing)
+st.warning("🔐 Checking OpenAI API Key setup...")
+
+# Try Streamlit secrets first
+api_key_from_secrets = st.secrets.get("OPENAI_API_KEY")
+if api_key_from_secrets:
+    st.success("✅ Found API key in st.secrets!")
+else:
+    st.error("❌ API key not found in st.secrets")
+
+# Try environment fallback
+api_key_from_env = os.getenv("OPENAI_API_KEY")
+if api_key_from_env:
+    st.info("ℹ️ Found API key in environment variables.")
+else:
+    st.warning("⚠️ API key NOT found in environment variables.")
+
+# Assign key (priority: secrets → env → fallback warning)
+openai.api_key = api_key_from_secrets or api_key_from_env or "MISSING_KEY"
+
+if openai.api_key == "MISSING_KEY":
+    st.error("🚫 Unable to proceed: No valid API key found.")
 from utils.logic import recommend_package, calculate_strength_score
 from utils.summary import build_summary
 from utils.pdf_generator import generate_pdf_from_chat
