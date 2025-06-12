@@ -99,7 +99,7 @@ with tab2:
 # ✅ Tab 3 – PDF + Timeline
 with tab3:
     st.header("📄 Download Your AI-Powered Recruiting Report")
-    full_chat = "
+    full_chat = "This is your full chat transcript..."  # ✅ Add closing quote
 ".join([f"{m['role'].capitalize()}: {m['content']}" for m in st.session_state.messages[1:]])
 
     if st.button("📥 Generate PDF"):
