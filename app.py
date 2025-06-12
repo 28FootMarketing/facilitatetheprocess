@@ -1,32 +1,30 @@
 import streamlit as st
+import openai
 from utils.logic import recommend_package, calculate_strength_score
 from utils.summary import build_summary
 from utils.pdf_generator import generate_pdf
 
-st.set_page_config(page_title="Athletic Recruiting Assistant", layout="centered")
-st.image("https://recruit.facilitatetheprocess.com/images/logo.png", width=220)
-st.title("🏈 ScoutBot: Recruiting Assistant – Phase 2")
-st.subheader("Let’s match you with a plan and score your recruiting strength.")
+st.set_page_config(page_title="ScoutBot AI Assistant", layout="centered")
+st.title("🎙️ ScoutBot AI: Your Recruiting Companion")
 
-with st.form("recruiting_form"):
-    name = st.text_input("What is your first name?")
-    grade = st.selectbox("What is your current grade level?", ["8th", "9th", "10th", "11th", "12th", "Post-grad"])
-    sport = st.selectbox("What is your primary sport?", ["Football", "Basketball", "Volleyball", "Soccer", "Track", "Other"])
-    motivation = st.slider("How motivated are you to get recruited?", 1, 10, 7)
-    outreach = st.radio("Have you already contacted any college coaches?", ["Yes", "No"])
-    gpa = st.number_input("What is your current GPA?", min_value=0.0, max_value=4.5, step=0.1)
+# Step 1: Setup session state
+if "messages" not in st.session_state:
+    st.session_state.messages = [
+        {"role": "system", "content": "You are ScoutBot, a helpful assistant for high school athletes navigating college recruiting. Offer tips, encouragement, and recruiting advice when asked."}
+    ]
 
-    st.markdown("### Enter 3 Performance Stats for Your Sport")
-    stat1 = st.number_input("Stat 1 (e.g., PPG, Goals, PRs)", step=0.1)
-    stat2 = st.number_input("Stat 2", step=0.1)
-    stat3 = st.number_input("Stat 3", step=0.1)
+# Step 2: User Input + GPT Chat
+user_input = st.chat_input("Ask ScoutBot anything about recruiting…")
+if user_input:
+    st.session_state.messages.append({"role": "user", "content": user_input})
+    with st.spinner("ScoutBot is thinking..."):
+        response = openai.ChatCompletion.create(
+            model="gpt-4o",
+            messages=st.session_state.messages
+        )
+        reply = response["choices"][0]["message"]["content"]
+        st.session_state.messages.append({"role": "assistant", "content": reply})
 
-    submitted = st.form_submit_button("Generate My Plan & Report")
-
-if submitted:
-    plan = recommend_package(grade, motivation, outreach, gpa)
-    score = calculate_strength_score(stat1, stat2, stat3)
-    summary = build_summary(name, sport, plan, score)
-
-    st.success(summary)
-    st.download_button("📥 Download My PDF Report", generate_pdf(name, sport, grade, gpa, plan, score), file_name=f"{name}_recruiting_report.pdf")
+# Step 3: Display full conversation
+for msg in st.session_state.messages[1:]:  # skip system message
+    st.chat_message(msg["role"]).markdown(msg["content"])
