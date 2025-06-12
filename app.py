@@ -221,3 +221,11 @@ with tab5:
     for entry in st.session_state.khloe_memory[::-1]:
         st.write(f"🗓️ {entry['timestamp']} — **{entry['status']}**")
 
+    if st.checkbox("🕐 Text me next week to check in (Beta)"):
+        st.text_input("Phone number (optional for future SMS reminders)")
+        st.caption("📬 This reminder will be added to your schedule. Coming soon via SMS.")
+
+    st.markdown("### ⏳ Past Check-Ins")
+    for entry in st.session_state.khloe_memory[::-1]:
+        st.write(f"🗓️ {entry['timestamp']} — **{entry['status']}**")
+
