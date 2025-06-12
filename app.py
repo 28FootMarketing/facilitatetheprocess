@@ -99,7 +99,9 @@ with tab1:
 # 💬 STEP 2 — GPT Chat With Selected Agent
 with tab2:
     selected_agent = st.session_state.selected_agent
-    st.header(f"{AGENTS[selected_agent]['emoji']} Chat with {selected_agent}")
+...
+st.header(f"{AGENTS[selected_agent]['emoji']} Chat with {selected_agent}")
+
 
     user_input = st.chat_input(f"What do you want to ask {selected_agent}?")
 
