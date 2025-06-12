@@ -1,33 +1,32 @@
 import streamlit as st
-from utils.logic import recommend_package, build_summary
+from utils.logic import recommend_package, calculate_strength_score
+from utils.summary import build_summary
+from utils.pdf_generator import generate_pdf
 
 st.set_page_config(page_title="Athletic Recruiting Assistant", layout="centered")
+st.image("https://recruit.facilitatetheprocess.com/images/logo.png", width=220)
+st.title("🏈 ScoutBot: Recruiting Assistant – Phase 2")
+st.subheader("Let’s match you with a plan and score your recruiting strength.")
 
-# Logo and header
-st.image("https://images.leadconnectorhq.com/image/f_webp/q_80/r_1200/u_https://assets.cdn.filesafe.space/lvuhyrRsvUd75dVxBxM2/media/65f2015a1a919560617dd346.png", width=220)
-st.title("🏈 ScoutBot: Your Recruiting Assistant")
-st.subheader("Let’s find the right path for your athletic journey.")
-
-# Input questions
 with st.form("recruiting_form"):
-    name = st.text_input("What's your first name?")
+    name = st.text_input("What is your first name?")
     grade = st.selectbox("What is your current grade level?", ["8th", "9th", "10th", "11th", "12th", "Post-grad"])
-    sport = st.text_input("What is your primary sport?")
-    motivation = st.slider("How motivated are you to get recruited? (1 = Curious, 10 = All-in)", 1, 10, 7)
+    sport = st.selectbox("What is your primary sport?", ["Football", "Basketball", "Volleyball", "Soccer", "Track", "Other"])
+    motivation = st.slider("How motivated are you to get recruited?", 1, 10, 7)
     outreach = st.radio("Have you already contacted any college coaches?", ["Yes", "No"])
     gpa = st.number_input("What is your current GPA?", min_value=0.0, max_value=4.5, step=0.1)
 
-    submitted = st.form_submit_button("Show Me My Plan")
+    st.markdown("### Enter 3 Performance Stats for Your Sport")
+    stat1 = st.number_input("Stat 1 (e.g., PPG, Goals, PRs)", step=0.1)
+    stat2 = st.number_input("Stat 2", step=0.1)
+    stat3 = st.number_input("Stat 3", step=0.1)
+
+    submitted = st.form_submit_button("Generate My Plan & Report")
 
 if submitted:
     plan = recommend_package(grade, motivation, outreach, gpa)
-    summary = build_summary(name, sport, plan)
+    score = calculate_strength_score(stat1, stat2, stat3)
+    summary = build_summary(name, sport, plan, score)
 
-    st.success(f"✅ {summary}")
-
-    if plan == "Role Player":
-        st.markdown("[Start with the Role Player Plan →](https://recruit.facilitatetheprocess.com/order-form-roleplayermothly)")
-    elif plan == "Starter":
-        st.markdown("[Check Out the Starter Plan →](https://recruit.facilitatetheprocess.com/order-form-starterpackage)")
-    else:
-        st.markdown("[Go All-In with the Captain Plan →](https://recruit.facilitatetheprocess.com/order-form-captainpackage)")
+    st.success(summary)
+    st.download_button("📥 Download My PDF Report", generate_pdf(name, sport, grade, gpa, plan, score), file_name=f"{name}_recruiting_report.pdf")
