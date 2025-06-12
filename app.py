@@ -229,3 +229,31 @@ with tab5:
     for entry in st.session_state.khloe_memory[::-1]:
         st.write(f"🗓️ {entry['timestamp']} — **{entry['status']}**")
 
+with tab6:
+    st.header("🔥 Recruiting Challenge Tracker")
+
+    today = datetime.now().strftime("%Y-%m-%d")
+
+    if "recruiting_log" not in st.session_state:
+        st.session_state.recruiting_log = {}
+
+    st.subheader(f"Tasks for {today}")
+
+    tasks = {
+        "Message a coach": False,
+        "Watch your game film": False,
+        "Update recruiting profile": False,
+        "Post highlight on social": False
+    }
+
+    for task in tasks:
+        tasks[task] = st.checkbox(task, value=st.session_state.recruiting_log.get(today, {}).get(task, False))
+
+    if st.button("✅ Save Today's Progress"):
+        st.session_state.recruiting_log[today] = tasks
+        st.success("Progress saved!")
+
+    st.markdown("### 📈 Your Weekly Progress")
+
+    progress_df = pd.DataFrame.from_dict(st.session_state.recruiting_log, orient="index")
+    st.line_chart(progress_df.sum(axis=1))  # Shows task completion over time
