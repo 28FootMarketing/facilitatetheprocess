@@ -29,4 +29,4 @@ if user_input:
 for msg in st.session_state.messages[1:]:  # skip system message
     st.chat_message(msg["role"]).markdown(msg["content"])
 import os
-openai.api_key = os.getenv("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")
+openai.api_key = os.getenv("sk-XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX")
