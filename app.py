@@ -1,8 +1,6 @@
 import streamlit as st
 import openai
 import os
-import pandas as pd
-from datetime import datetime
 from utils.logic import recommend_package, calculate_strength_score
 from utils.summary import build_summary
 from utils.pdf_generator import generate_pdf_from_chat
@@ -10,12 +8,12 @@ from utils.pdf_generator import generate_pdf_from_chat
 # ✅ Must be first Streamlit command
 st.set_page_config(page_title="ScoutBot Recruiting Assistant", layout="wide")
 
-# ✅ Load OpenAI API Key
-try:
-    openai.api_key = st.secrets["OPENAI_API_KEY"]
-except Exception:
-    openai.api_key = os.getenv("OPENAI_API_KEY", "sk-missing-key")
-    st.warning("Using fallback API key. Be sure to set one via st.secrets or .env.")
+# ✅ Require a valid OpenAI API key
+api_key = st.secrets.get("OPENAI_API_KEY") or os.getenv("OPENAI_API_KEY")
+if not api_key or api_key == "sk-missing-key":
+    st.error("🚫 OpenAI API key is missing. Set it via st.secrets or your .env file.")
+    st.stop()
+openai.api_key = api_key
 
 # ✅ Define agents
 AGENTS = {
