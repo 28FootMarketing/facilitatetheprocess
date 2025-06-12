@@ -36,12 +36,18 @@ for key in ["name", "sport", "grade", "gpa", "motivation", "outreach", "stat1", 
 # ✅ Sidebar agent picker
 with st.sidebar:
     st.markdown("## 🤖 Choose Your Recruiting Coach")
+
     for agent_name, agent_info in AGENTS.items():
         if st.button(f"{agent_info['emoji']} {agent_name}"):
-            st.session_state.selected_agent = agent_name
-            st.session_state.messages = [{"role": "system", "content": AGENTS[agent_name]["system_prompt"]}]
-            st.experimental_rerun()
+            if st.session_state.selected_agent != agent_name:
+                st.session_state.selected_agent = agent_name
+                st.session_state.messages = [
+                    {"role": "system", "content": AGENTS[agent_name]["system_prompt"]}
+                ]
+                st.experimental_rerun()  # Safe: only runs after updating session state
+
     st.markdown(f"**Active Agent:** {AGENTS[st.session_state.selected_agent]['emoji']} {st.session_state.selected_agent}")
+
 
 tab1, tab2, tab3, tab4, tab5 = st.tabs([
     "📋 Step 1: My Recruiting Info",
