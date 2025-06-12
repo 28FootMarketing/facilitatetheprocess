@@ -139,6 +139,42 @@ with tab3:
             data=pdf_bytes,
             file_name=f"{st.session_state.name}_recruiting_plan.pdf"
         )
+with tab4:
+    st.header("📥 Set Up Your Follow-Up Assistant")
+
+    st.write("Would you like your own personalized recruiting assistant to follow up with you?")
+
+    with st.form("followup_form"):
+        lead_name = st.text_input("Your Name", value=st.session_state.name)
+        lead_email = st.text_input("Email Address")
+        assistant_default = st.session_state.get("assistant_name", "Ava")
+        assistant_name = st.text_input("Name Your Assistant (e.g., Ava, Jace, Coach T)", value=assistant_default)
+
+        submitted = st.form_submit_button("📩 Send Me the Plan")
+
+        if submitted:
+            # Save name in session state for future messages
+            st.session_state.assistant_name = assistant_name
+
+            # ✅ Optional local save for testing
+            try:
+                with open("leads.csv", "a") as f:
+                    f.write(f"{lead_name},{lead_email},{assistant_name}\n")
+            except:
+                st.info("📎 Note: CSV saving skipped in cloud deployment.")
+
+            # ✅ Optional webhook placeholder (GoHighLevel, Zapier, etc.)
+            # import requests
+            # requests.post("https://your-webhook-url.com", json={
+            #     "name": lead_name,
+            #     "email": lead_email,
+            #     "assistant": assistant_name
+            # })
+
+            st.success(f"✅ Thanks, {lead_name}! {assistant_name} will follow up with you.")
+            st.markdown(f"📬 Keep an eye on your inbox — **{assistant_name}** is preparing your personalized support.")
+assistant = st.session_state.get("assistant_name", "Ava")
+st.markdown(f"Your assistant, **{assistant}**, is here to help anytime.")
 
     # === Recruiting Timeline Section ===
     st.header("📆 Custom 4-Week Recruiting Timeline")
