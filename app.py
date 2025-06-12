@@ -51,13 +51,15 @@ with st.sidebar:
 
 # ✅ Main Tabs
 tab1, tab2, tab3, tab4, tab5, tab6, tab7 = st.tabs([
-    "📋 Step 1: My Recruiting Info",
-    "💬 Step 2: Ask Your Coach",
-    "📄 Step 3: Download Report",
-    "📥 Step 4: Follow-Up Help"
+    "📍 Step 1: Profile Setup",
+    "🎥 Step 2: Film Room",
+    "📬 Step 3: Coach Outreach",
+    "🧠 Step 4: Recruiting Education",
+    "🔍 Step 5: Match Finder",
+    "📆 Step 6: Timeline Builder",
+    "📊 Step 7: Daily Tracker (Candace)"
 ])
 
-# ✅ Tab 1 – Recruiting Info
 with tab1:
     st.header("📋 Step 1: Build Your Recruiting Profile")
     with st.form("recruiting_form"):
