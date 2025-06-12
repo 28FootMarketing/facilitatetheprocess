@@ -43,14 +43,13 @@ with st.sidebar:
             st.experimental_rerun()
     st.markdown(f"**Active Agent:** {AGENTS[st.session_state.selected_agent]['emoji']} {st.session_state.selected_agent}")
 
-# ✅ Main Tabs
-tab1, tab2, tab3, tab4 = st.tabs([
+tab1, tab2, tab3, tab4, tab5 = st.tabs([
     "📋 Step 1: My Recruiting Info",
     "💬 Step 2: Ask Your Coach",
     "📄 Step 3: Download Report",
-    "📥 Step 4: Follow-Up Help"
+    "📥 Step 4: Follow-Up Help",
+    "📲 Step 5: Check-In With Khloe"
 ])
-
 # ✅ Tab 1 – Recruiting Info
 with tab1:
     st.header("📋 Step 1: Build Your Recruiting Profile")
@@ -148,4 +147,25 @@ with tab4:
             except:
                 st.info("📎 CSV not saved in this environment.")
             st.success(f"✅ Thanks, {lead_name}! {assistant_name} will follow up with you soon.")
+# ✅ Tab 5 – Khloe Check-In Bot (NEW)
+with tab5:
+    st.header("📲 Weekly Check-In with Khloe")
+
+    st.write("Hi, I’m **Khloe** — your consistency coach. Let’s see how you’re progressing this week.")
+
+    khloe_checkin = st.radio(
+        "Did you complete your recruiting goals for this week?",
+        ["Yes, I crushed it 💪", "Not yet, still working on it 😅"]
+    )
+
+    if khloe_checkin == "Yes, I crushed it 💪":
+        st.success("🔥 That’s awesome! Keep the momentum going.")
+        st.write("Take 2 minutes to send another message to a coach today!")
+    else:
+        st.warning("⏳ No worries. Progress > perfection.")
+        st.write("Khloe says: 'Choose one small thing to finish today — even if it’s just rewatching your highlight tape.'")
+
+    if st.checkbox("🕐 Text me next week to check in (Beta)"):
+        st.text_input("Phone number (optional for future SMS reminders)")
+        st.caption("📬 This reminder will be added to your schedule. Coming soon via SMS.")
 
