@@ -13,7 +13,7 @@ api_key = st.secrets.get("OPENAI_API_KEY") or os.getenv("OPENAI_API_KEY")
 if not api_key or api_key == "sk-missing-key":
     st.error("🚫 OpenAI API key is missing. Set it via st.secrets or your .env file.")
     st.stop()
-openai.api_key = api_key
+openai.api_key = st.secrets[“OPENAI_API_KEY”]
 
 # ✅ Define agents
 AGENTS = {
@@ -202,4 +202,3 @@ with tab7:
     if st.session_state.recruiting_log:
         progress_df = pd.DataFrame.from_dict(st.session_state.recruiting_log, orient="index")
         st.line_chart(progress_df.sum(axis=1))
-
