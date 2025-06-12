@@ -126,7 +126,7 @@ with tab3:
         for m in st.session_state.messages[1:]
     ])
 
-    # Generate PDF report from chat + user info
+    # Generate PDF report
     if st.button("📥 Generate PDF"):
         pdf_bytes = generate_pdf_from_chat(
             name=st.session_state.name,
@@ -139,44 +139,8 @@ with tab3:
             data=pdf_bytes,
             file_name=f"{st.session_state.name}_recruiting_plan.pdf"
         )
-with tab4:
-    st.header("📥 Set Up Your Follow-Up Assistant")
 
-    st.write("Would you like your own personalized recruiting assistant to follow up with you?")
-
-    with st.form("followup_form"):
-        lead_name = st.text_input("Your Name", value=st.session_state.name)
-        lead_email = st.text_input("Email Address")
-        assistant_default = st.session_state.get("assistant_name", "Ava")
-        assistant_name = st.text_input("Name Your Assistant (e.g., Ava, Jace, Coach T)", value=assistant_default)
-
-        submitted = st.form_submit_button("📩 Send Me the Plan")
-
-        if submitted:
-            # Save name in session state for future messages
-            st.session_state.assistant_name = assistant_name
-
-            # ✅ Optional local save for testing
-            try:
-                with open("leads.csv", "a") as f:
-                    f.write(f"{lead_name},{lead_email},{assistant_name}\n")
-            except:
-                st.info("📎 Note: CSV saving skipped in cloud deployment.")
-
-            # ✅ Optional webhook placeholder (GoHighLevel, Zapier, etc.)
-            # import requests
-            # requests.post("https://your-webhook-url.com", json={
-            #     "name": lead_name,
-            #     "email": lead_email,
-            #     "assistant": assistant_name
-            # })
-
-            st.success(f"✅ Thanks, {lead_name}! {assistant_name} will follow up with you.")
-            st.markdown(f"📬 Keep an eye on your inbox — **{assistant_name}** is preparing your personalized support.")
-assistant = st.session_state.get("assistant_name", "Ava")
-st.markdown(f"Your assistant, **{assistant}**, is here to help anytime.")
-
-    # === Recruiting Timeline Section ===
+    # ✅ Proper indentation starts here
     st.header("📆 Custom 4-Week Recruiting Timeline")
 
     if st.button("📅 Generate Weekly Plan"):
@@ -194,8 +158,8 @@ st.markdown(f"Your assistant, **{assistant}**, is here to help anytime.")
         prompt = f"""
         Based on the following student-athlete profile and conversation, generate a 4-week recruiting timeline.
         Break it into Week 1, Week 2, Week 3, and Week 4.
-        Each week should have 2–3 actionable recruiting tasks.
-        Keep the tone motivational and simple.
+        Each week should include 2–3 clear action items.
+        Keep the tone motivational and practical.
         ===
         {context_summary}
         """
@@ -204,14 +168,8 @@ st.markdown(f"Your assistant, **{assistant}**, is here to help anytime.")
             timeline_response = openai.ChatCompletion.create(
                 model="gpt-4o",
                 messages=[
-                    {
-                        "role": "system",
-                        "content": "You are a recruiting strategist who helps student-athletes build weekly action plans to increase exposure and coach interaction."
-                    },
-                    {
-                        "role": "user",
-                        "content": prompt
-                    }
+                    {"role": "system", "content": "You are a recruiting strategist helping high school athletes build short-term action plans."},
+                    {"role": "user", "content": prompt}
                 ]
             )
             timeline_text = timeline_response["choices"][0]["message"]["content"]
