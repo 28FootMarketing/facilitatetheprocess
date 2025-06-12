@@ -8,5 +8,11 @@ def recommend_package(grade, motivation, outreach, gpa):
     else:
         return "Starter"
 
-def build_summary(name, sport, plan):
-    return f"{name}, based on your inputs, the **{plan} Plan** is your best starting point. It aligns with your journey as a {sport} athlete."
+def calculate_strength_score(stat1, stat2, stat3):
+    raw_score = (stat1 + stat2 + stat3) / 3
+    if raw_score >= 20:
+        return "Elite"
+    elif raw_score >= 10:
+        return "Competitive"
+    else:
+        return "Developing"
