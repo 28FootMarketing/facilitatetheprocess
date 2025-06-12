@@ -130,5 +130,40 @@ with tab3:
         st.download_button(
             label="⬇️ Download Report",
             data=pdf_bytes,
-            file_name=f"{st.session_state.name}_recruiting_plan.pdf"
+            file_name=f"{st.session_state.name}_recruiting_plan.pdf"    st.header("📆 Custom 4-Week Recruiting Timeline")
+    
+    if st.button("📅 Generate Weekly Plan"):
+        context_summary = f"""
+        Name: {st.session_state.name}
+        Sport: {st.session_state.sport}
+        Grade: {st.session_state.grade}
+        GPA: {st.session_state.gpa}
+        Motivation: {st.session_state.motivation}
+        Has contacted coaches: {st.session_state.outreach}
+        Recent Conversation:
+        {full_chat}
+        """
+
+        prompt = f"""
+        Based on the following student-athlete profile and conversation, generate a 4-week recruiting timeline.
+        Break it into Week 1, Week 2, Week 3, Week 4.
+        Each week should include 2–3 clear action items.
+        Keep the tone motivational, clear, and practical.
+
+        ===
+        {context_summary}
+        """
+
+        with st.spinner("Building your timeline..."):
+            timeline_response = openai.ChatCompletion.create(
+                model="gpt-4o",
+                messages=[
+                    {"role": "system", "content": "You are a recruiting strategist who helps athletes plan short-term timelines to improve college recruiting results."},
+                    {"role": "user", "content": prompt}
+                ]
+            )
+            timeline_text = timeline_response["choices"][0]["message"]["content"]
+            st.markdown("### 📋 Your 4-Week Action Plan")
+            st.markdown(timeline_text)
+
         )
