@@ -119,8 +119,15 @@ with tab2:
 # 📄 STEP 3 — Generate PDF Report
 with tab3:
     st.header("📄 Download Your AI-Powered Recruiting Report")
+
+    # Combine all messages for context
+    full_chat = "\n".join([
+        f"{m['role'].capitalize()}: {m['content']}"
+        for m in st.session_state.messages[1:]
+    ])
+
+    # Generate PDF report from chat + user info
     if st.button("📥 Generate PDF"):
-        full_chat = "\n".join([f"{m['role'].capitalize()}: {m['content']}" for m in st.session_state.messages[1:]])
         pdf_bytes = generate_pdf_from_chat(
             name=st.session_state.name,
             sport=st.session_state.sport,
@@ -130,8 +137,12 @@ with tab3:
         st.download_button(
             label="⬇️ Download Report",
             data=pdf_bytes,
-            file_name=f"{st.session_state.name}_recruiting_plan.pdf"    st.header("📆 Custom 4-Week Recruiting Timeline")
-    
+            file_name=f"{st.session_state.name}_recruiting_plan.pdf"
+        )
+
+    # === Recruiting Timeline Section ===
+    st.header("📆 Custom 4-Week Recruiting Timeline")
+
     if st.button("📅 Generate Weekly Plan"):
         context_summary = f"""
         Name: {st.session_state.name}
@@ -146,10 +157,9 @@ with tab3:
 
         prompt = f"""
         Based on the following student-athlete profile and conversation, generate a 4-week recruiting timeline.
-        Break it into Week 1, Week 2, Week 3, Week 4.
-        Each week should include 2–3 clear action items.
-        Keep the tone motivational, clear, and practical.
-
+        Break it into Week 1, Week 2, Week 3, and Week 4.
+        Each week should have 2–3 actionable recruiting tasks.
+        Keep the tone motivational and simple.
         ===
         {context_summary}
         """
@@ -158,12 +168,16 @@ with tab3:
             timeline_response = openai.ChatCompletion.create(
                 model="gpt-4o",
                 messages=[
-                    {"role": "system", "content": "You are a recruiting strategist who helps athletes plan short-term timelines to improve college recruiting results."},
-                    {"role": "user", "content": prompt}
+                    {
+                        "role": "system",
+                        "content": "You are a recruiting strategist who helps student-athletes build weekly action plans to increase exposure and coach interaction."
+                    },
+                    {
+                        "role": "user",
+                        "content": prompt
+                    }
                 ]
             )
             timeline_text = timeline_response["choices"][0]["message"]["content"]
-            st.markdown("### 📋 Your 4-Week Action Plan")
+            st.markdown("### 📝 Your 4-Week Action Plan")
             st.markdown(timeline_text)
-
-        )
