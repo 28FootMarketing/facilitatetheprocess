@@ -50,7 +50,7 @@ with st.sidebar:
     st.markdown(f"**Active Agent:** {AGENTS[st.session_state.selected_agent]['emoji']} {st.session_state.selected_agent}")
 
 # ✅ Main Tabs
-tab1, tab2, tab3, tab4, tab5 = st.tabs([
+tab1, tab2, tab3, tab4, tab5, tab6, tab7 = st.tabs([
     "📋 Step 1: My Recruiting Info",
     "💬 Step 2: Ask Your Coach",
     "📄 Step 3: Download Report",
@@ -101,9 +101,9 @@ with tab2:
 with tab3:
     st.header("📄 Download Your AI-Powered Recruiting Report")
     
-    full_chat = "
-".join([f"{m['role'].capitalize()}: {m['content']}" for m in st.session_state.messages[1:]])
-.capitalize()}: {m['content']}" for m in st.session_state.messages[1:]])
+    full_chat = "\n".join(
+        [f"{m['role'].capitalize()}: {m['content']}" for m in st.session_state.messages[1:]]
+    )
 
     if st.button("📥 Generate PDF"):
         pdf_bytes = generate_pdf_from_chat(
@@ -221,16 +221,11 @@ with tab5:
     for entry in st.session_state.khloe_memory[::-1]:
         st.write(f"🗓️ {entry['timestamp']} — **{entry['status']}**")
 
-    if st.checkbox("🕐 Text me next week to check in (Beta)"):
-        st.text_input("Phone number (optional for future SMS reminders)")
-        st.caption("📬 This reminder will be added to your schedule. Coming soon via SMS.")
 
-    st.markdown("### ⏳ Past Check-Ins")
-    for entry in st.session_state.khloe_memory[::-1]:
-        st.write(f"🗓️ {entry['timestamp']} — **{entry['status']}**")
-
-with tab6:
-    st.header("🔥 Recruiting Challenge Tracker")
+# ✅ Tab 7 – Recruiting Challenge Tracker (Candace)
+with tab7:
+    st.header("📊 Step 6: Daily Tracker (with Candace)")
+    st.write("Candace says: _Let’s build your streak one day at a time._")
 
     today = datetime.now().strftime("%Y-%m-%d")
 
@@ -247,7 +242,8 @@ with tab6:
     }
 
     for task in tasks:
-        tasks[task] = st.checkbox(task, value=st.session_state.recruiting_log.get(today, {}).get(task, False))
+        current_value = st.session_state.recruiting_log.get(today, {}).get(task, False)
+        tasks[task] = st.checkbox(task, value=current_value)
 
     if st.button("✅ Save Today's Progress"):
         st.session_state.recruiting_log[today] = tasks
@@ -255,5 +251,6 @@ with tab6:
 
     st.markdown("### 📈 Your Weekly Progress")
 
-    progress_df = pd.DataFrame.from_dict(st.session_state.recruiting_log, orient="index")
-    st.line_chart(progress_df.sum(axis=1))  # Shows task completion over time
+    if st.session_state.recruiting_log:
+        progress_df = pd.DataFrame.from_dict(st.session_state.recruiting_log, orient="index")
+        st.line_chart(progress_df.sum(axis=1))
