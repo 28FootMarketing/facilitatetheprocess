@@ -48,14 +48,14 @@ with st.sidebar:
 
     st.markdown(f"**Active Agent:** {AGENTS[st.session_state.selected_agent]['emoji']} {st.session_state.selected_agent}")
 
-
+# ✅ Main Tabs
 tab1, tab2, tab3, tab4, tab5 = st.tabs([
     "📋 Step 1: My Recruiting Info",
     "💬 Step 2: Ask Your Coach",
     "📄 Step 3: Download Report",
-    "📥 Step 4: Follow-Up Help",
-    "📲 Step 5: Check-In With Khloe"
+    "📥 Step 4: Follow-Up Help"
 ])
+
 # ✅ Tab 1 – Recruiting Info
 with tab1:
     st.header("📋 Step 1: Build Your Recruiting Profile")
@@ -99,7 +99,8 @@ with tab2:
 # ✅ Tab 3 – PDF + Timeline
 with tab3:
     st.header("📄 Download Your AI-Powered Recruiting Report")
-    full_chat = "\n".join([f"{m['role'].capitalize()}: {m['content']}" for m in st.session_state.messages[1:]])
+    full_chat = "
+".join([f"{m['role'].capitalize()}: {m['content']}" for m in st.session_state.messages[1:]])
 
     if st.button("📥 Generate PDF"):
         pdf_bytes = generate_pdf_from_chat(
@@ -153,7 +154,8 @@ with tab4:
             except:
                 st.info("📎 CSV not saved in this environment.")
             st.success(f"✅ Thanks, {lead_name}! {assistant_name} will follow up with you soon.")
-# ✅ Tab 5 – Khloe Check-In Bot (NEW)
+
+# ✅ Tab 5 – Khloe Check-In Bot
 with tab5:
     st.header("📲 Weekly Check-In with Khloe")
 
@@ -174,4 +176,45 @@ with tab5:
     if st.checkbox("🕐 Text me next week to check in (Beta)"):
         st.text_input("Phone number (optional for future SMS reminders)")
         st.caption("📬 This reminder will be added to your schedule. Coming soon via SMS.")
+# ✅ Memory Initialization
+if "khloe_memory" not in st.session_state:
+    st.session_state.khloe_memory = []
+
+def log_khloe_checkin(status):
+    from datetime import datetime
+    st.session_state.khloe_memory.append({
+        "timestamp": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+        "status": status
+    })
+
+
+
+
+
+with tab5:
+    st.header("📲 Weekly Check-In with Khloe")
+
+    st.write("Hi, I’m **Khloe** — your consistency coach. Let’s see how you’re progressing this week.")
+
+    khloe_checkin = st.radio(
+        "Did you complete your recruiting goals for this week?",
+        ["Yes, I crushed it 💪", "Not yet, still working on it 😅"]
+    )
+
+    if khloe_checkin == "Yes, I crushed it 💪":
+        st.success("🔥 That’s awesome! Keep the momentum going.")
+        st.write("Take 2 minutes to send another message to a coach today!")
+        log_khloe_checkin("Yes")
+    else:
+        st.warning("⏳ No worries. Progress > perfection.")
+        st.write("Khloe says: 'Choose one small thing to finish today — even if it’s just rewatching your highlight tape.'")
+        log_khloe_checkin("Not Yet")
+
+    if st.checkbox("🕐 Text me next week to check in (Beta)"):
+        st.text_input("Phone number (optional for future SMS reminders)")
+        st.caption("📬 This reminder will be added to your schedule. Coming soon via SMS.")
+
+    st.markdown("### ⏳ Past Check-Ins")
+    for entry in st.session_state.khloe_memory[::-1]:
+        st.write(f"🗓️ {entry['timestamp']} — **{entry['status']}**")
 
