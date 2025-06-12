@@ -14,7 +14,9 @@ if not api_key or api_key == "sk-missing-key":
     st.error("🚫 OpenAI API key is missing. Set it via st.secrets or your .env file.")
     st.stop()
 openai.api_key = st.secrets[“OPENAI_API_KEY”]
-
+from dotenv import load_dotenv
+load_dotenv()
+openai.api_key = st.secrets.get("OPENAI_API_KEY") or os.getenv("OPENAI_API_KEY")
 # ✅ Define agents
 AGENTS = {
     "Jordan": {"emoji": "🏀", "system_prompt": "You are Jordan, the motivator..."},
