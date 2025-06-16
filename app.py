@@ -62,6 +62,35 @@ tab1, tab2, tab3, tab4, tab5, tab6, tab7 = st.tabs([
     "📊 Step 7: Daily Tracker (Candace)"
 ])
 
+with tab1:
+    st.subheader("Step 1: Profile Setup")
+    st.text_input("Full Name", key="name")
+    st.selectbox("Sport", ["Football", "Basketball", "Soccer", "Track", "Other"], key="sport")
+    st.selectbox("Current Grade", ["9", "10", "11", "12", "Graduated"], key="grade")
+    st.text_input("GPA", key="gpa")
+    st.text_area("Motivation Level (1–10 scale)", key="motivation")
+    st.text_area("Coach Outreach Status", key="outreach")
+
+with tab3:
+    st.subheader("Step 3: Coach Outreach")
+    st.markdown("⚠️ Outreach automation in progress. You’ll be able to track messages, status, and follow-ups here.")
+
+with tab4:
+    st.subheader("Step 4: Recruiting Education")
+    st.markdown("🎓 Lessons, webinars, and prep modules will appear here.")
+
+with tab5:
+    st.subheader("Step 5: Match Finder")
+    st.markdown("🔍 AI-assisted matchmaking with colleges — COMING SOON.")
+
+with tab6:
+    st.subheader("Step 6: Timeline Builder")
+    st.markdown("📆 Recruiting timeline, reminders, and task planner setup will show here.")
+
+with tab7:
+    st.subheader("Step 7: Daily Tracker (Candace)")
+    st.markdown("📊 Track your workouts, emails, film sent, and more here.")
+
 # Agent chat tab
 with tab2:
     selected_agent = st.session_state.selected_agent
