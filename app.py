@@ -96,49 +96,97 @@ with tab2:
     for msg in st.session_state.messages[1:]:
         st.chat_message(msg["role"]).markdown(msg["content"])
 
-# ✅ Step 3: Coach Outreach
+# Step 3: Coach Outreach
 with tab3:
     st.subheader("📬 Step 3: Coach Outreach")
-    email_template = f"""
-Subject: {st.session_state.name} | {st.session_state.sport} Student-Athlete
+    st.write("Use this draft as a starting point. Add your voice!")
 
-Dear Coach,
+    subject = f"{st.session_state.name} | {st.session_state.sport} Recruit | Class of {st.session_state.grade}"
+    body = f"""
+Hi Coach,
 
-My name is {st.session_state.name}, and I am currently in {st.session_state.grade} grade. I am passionate about {st.session_state.sport} and would love the opportunity to learn more about your program.
+My name is {st.session_state.name}, a {st.session_state.grade} grade student-athlete passionate about {st.session_state.sport}. I have been training consistently and am looking for a program where I can grow both athletically and academically.
 
-Sincerely,
+Here's my highlight video: {st.session_state.video_link or 'Insert Link'}
+
+I’d love to know:
+- What kind of athletes do you prioritize in your program?
+- When would be a good time to speak with you or a staff member?
+- Are you currently recruiting for my position?
+
+Looking forward to hearing from you.
+
+Best,  
 {st.session_state.name}
 """
-    st.code(email_template, language='markdown')
 
-# ✅ Step 4: Recruiting Education
+    st.text_area("📧 Email Subject", subject)
+    st.text_area("📧 Email Body", body, height=200)
+    st.download_button("📤 Download Email Draft", body, file_name="coach_outreach_email.txt")
+
+# Step 4: Recruiting Education
 with tab4:
     st.subheader("🧠 Step 4: Recruiting Education")
-    st.markdown("- NCAA/NAIA eligibility")
-    st.markdown("- Highlight tape strategy")
-    st.markdown("- When to email vs. call coaches")
-    st.markdown("- Unofficial vs. Official visits")
+    st.markdown("Choose a category to explore:")
+    edu_topic = st.selectbox("📘 Recruiting Topic", [
+        "NCAA/NAIA Eligibility",
+        "Highlight Tape Strategy",
+        "Coach Communication Do’s & Don’ts",
+        "Unofficial vs. Official Visits"
+    ])
 
-# ✅ Step 5: Match Finder
+    edu_info = {
+        "NCAA/NAIA Eligibility": "You’ll need a Core GPA of 2.3+ and 16 core courses...",
+        "Highlight Tape Strategy": "Your tape should open with 3-5 standout plays...",
+        "Coach Communication Do’s & Don’ts": "DO personalize your message. DON’T copy-paste the same email...",
+        "Unofficial vs. Official Visits": "Unofficial visits are paid by you. Official visits include travel & lodging..."
+    }
+
+    st.info(edu_info.get(edu_topic, "Select a topic to get started."))
+    st.download_button("📝 Download Recruiting Checklist", "\n".join(edu_info.values()), file_name="recruiting_education.txt")
+
+# Step 5: Match Finder
 with tab5:
     st.subheader("🔍 Step 5: Match Finder")
-    st.session_state.stat1 = st.text_input("Key Stat #1")
-    st.session_state.stat2 = st.text_input("Key Stat #2")
-    st.session_state.stat3 = st.text_input("Key Stat #3")
-    try:
-        score = calculate_strength_score(st.session_state.stat1, st.session_state.stat2, st.session_state.stat3)
-        package = recommend_package(score)
-        st.success(f"Suggested Match Strength: {score} | Recommended Package: {package}")
-    except Exception as e:
-        st.error(f"⚠️ Error calculating strength score: {e}")
+    st.session_state.stat1 = st.text_input("🏅 Key Stat #1", st.session_state.stat1)
+    st.session_state.stat2 = st.text_input("📈 Key Stat #2", st.session_state.stat2)
+    st.session_state.stat3 = st.text_input("🎯 Key Stat #3", st.session_state.stat3)
 
-# ✅ Step 6: Timeline Builder
+    try:
+        score = calculate_strength_score(
+            float(st.session_state.stat1 or 0),
+            float(st.session_state.stat2 or 0),
+            float(st.session_state.stat3 or 0)
+        )
+        package = recommend_package(score)
+        st.success(f"✅ Match Score: {score:.2f} | Recommended Package: {package}")
+    except ValueError:
+        st.warning("Please enter numeric values for stats to calculate your score.")
+
+# Step 6: Timeline Builder
 with tab6:
     st.subheader("📆 Step 6: Timeline Builder")
     today = datetime.now().date()
-    eval_date = st.date_input("Coach Evaluation Date", today)
-    commit_date = st.date_input("Target Commitment Date")
-    st.info("📌 Add these milestones to your calendar.")
+    eval_date = st.date_input("📌 Coach Evaluation Target", today)
+    visit_window = st.date_input("🏫 Ideal Visit Window", today)
+    commit_goal = st.date_input("✍️ Commitment Goal", today)
+
+    st.markdown("**🧭 Suggested Timeline Milestones:**")
+    st.markdown("- 📅 Every 60 days: Send update emails to coaches")
+    st.markdown("- 🎥 Quarterly: Update highlight video")
+    st.markdown("- 📝 Before Evaluation: Review eligibility & transcripts")
+
+    timeline_text = f"""
+📌 Evaluation Date: {eval_date}
+🏫 Visit Window: {visit_window}
+✍️ Commitment Goal: {commit_goal}
+Milestones:
+- Send coach updates every 60 days.
+- Film review every 3 months.
+- Academic check before visits.
+"""
+
+    st.download_button("📥 Export Timeline", timeline_text, file_name="recruiting_timeline.txt")
 
 # ✅ Step 7: Daily Tracker
 with tab7:
