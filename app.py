@@ -276,27 +276,42 @@ with st.expander("📊 What does my score and package mean?"):
 # Step 6: Timeline Builder
 with tab6:
     st.subheader("📆 Step 6: Timeline Builder")
+
+    grade = st.session_state.grade
     today = datetime.now().date()
-    eval_date = st.date_input("📌 Coach Evaluation Target", today)
-    visit_window = st.date_input("🏫 Ideal Visit Window", today)
-    commit_goal = st.date_input("✍️ Commitment Goal", today)
 
-    st.markdown("**🧭 Suggested Timeline Milestones:**")
-    st.markdown("- 📅 Every 60 days: Send update emails to coaches")
-    st.markdown("- 🎥 Quarterly: Update highlight video")
-    st.markdown("- 📝 Before Evaluation: Review eligibility & transcripts")
+    # Suggested timeline dates by grade level
+    suggested_eval = {
+        "9th": today.replace(year=today.year + 1),
+        "10th": today.replace(year=today.year + 1, month=6),
+        "11th": today.replace(month=9),
+        "12th": today.replace(month=1),
+    }
 
-    timeline_text = f"""
-📌 Evaluation Date: {eval_date}
-🏫 Visit Window: {visit_window}
-✍️ Commitment Goal: {commit_goal}
-Milestones:
-- Send coach updates every 60 days.
-- Film review every 3 months.
-- Academic check before visits.
-"""
+    suggested_commit = {
+        "9th": today.replace(year=today.year + 3, month=5),
+        "10th": today.replace(year=today.year + 2, month=5),
+        "11th": today.replace(year=today.year + 1, month=5),
+        "12th": today.replace(month=11),
+    }
 
-    st.download_button("📥 Export Timeline", timeline_text, file_name="recruiting_timeline.txt")
+    st.markdown(f"📌 **Suggested Evaluation Date:** `{suggested_eval[grade]}`")
+    st.markdown(f"🎯 **Suggested Commitment Date:** `{suggested_commit[grade]}`")
+
+    # User entry for key dates
+    eval_date = st.date_input("🧐 Coach Evaluation Date", suggested_eval[grade])
+    commit_date = st.date_input("📝 Target Commitment Date", suggested_commit[grade])
+
+    # Visual representation of milestones
+    st.markdown("### 📍 Your Recruiting Milestone Timeline")
+    st.progress(0.25)
+    st.info("🔹 **Today** — Build your profile")
+    st.success(f"🔸 **{eval_date}** — Start coach outreach + evaluations")
+    st.warning(f"🔸 **{commit_date}** — College decision deadline")
+
+    # Optional PDF export
+    with st.expander("📄 Export Timeline as PDF"):
+        st.markdown("👉 Coming soon: Downloadable milestone planner PDF.")
 
 # Step 7: Daily Tracker (Candace)
 with tab7:
