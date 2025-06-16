@@ -188,14 +188,48 @@ Milestones:
 
     st.download_button("📥 Export Timeline", timeline_text, file_name="recruiting_timeline.txt")
 
-# ✅ Step 7: Daily Tracker
+# Step 7: Daily Tracker (Candace)
 with tab7:
     st.subheader("📊 Step 7: Daily Tracker")
-    checklist = [
-        "Sent follow-up email to coach",
-        "Updated highlight video",
-        "Reviewed recruiting tips",
-        "Trained or conditioned today"
+
+    st.markdown("**📝 Daily Action Checklist**")
+    daily_checklist = [
+        "Sent follow-up email to a coach",
+        "Trained or conditioned today",
+        "Watched game film",
+        "Updated recruiting profile or video",
+        "Reviewed academic progress"
     ]
-    completed = [st.checkbox(task) for task in checklist]
-    st.write(f"✅ Tasks completed today: {sum(completed)} / {len(checklist)}")
+    completed_tasks = [st.checkbox(task) for task in daily_checklist]
+    task_count = sum(completed_tasks)
+    st.success(f"✅ {task_count} / {len(daily_checklist)} tasks completed today")
+
+    st.markdown("---")
+    st.markdown("**📓 Daily Reflection Journal**")
+    st.session_state.mood = st.selectbox("Mood Today", ["😃 Great", "🙂 Okay", "😐 Meh", "😔 Struggling"])
+    st.session_state.reflection = st.text_area("What went well today? What needs work?")
+
+    # Generate AI feedback using Dawn (Emotional Reset Agent)
+    if st.button("💬 Get Feedback from Dawn"):
+        with st.spinner("Dawn is reflecting..."):
+            response = client.chat.completions.create(
+                model="ollama/llama3",
+                messages=[
+                    {"role": "system", "content": AGENTS["Dawn"]["system_prompt"]},
+                    {"role": "user", "content": f"My mood today: {st.session_state.mood}. Reflection: {st.session_state.reflection}"}
+                ]
+            )
+            dawn_reply = response.choices[0].message.content.strip()
+            st.markdown(f"**🧘 Dawn says:**\n\n{dawn_reply}")
+
+    st.markdown("---")
+    st.markdown("**📎 Export Today’s Summary**")
+    summary_text = f"""
+🗓️ Date: {datetime.now().strftime('%Y-%m-%d')}
+Mood: {st.session_state.mood}
+Tasks Completed: {task_count} / {len(daily_checklist)}
+
+Reflection:
+{st.session_state.reflection or 'N/A'}
+"""
+    st.download_button("📥 Download Tracker Summary", summary_text, file_name="daily_tracker_summary.txt")
