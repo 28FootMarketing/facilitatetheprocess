@@ -62,15 +62,33 @@ tab1, tab2, tab3, tab4, tab5, tab6, tab7 = st.tabs([
     "📊 Step 7: Daily Tracker (Candace)"
 ])
 
-# ✅ Step 1: Profile Setup
+# Step 1: Profile Setup (Enhanced)
 with tab1:
-    st.subheader("📍 Step 1: Profile Setup")
-    st.session_state.name = st.text_input("Athlete Name", st.session_state.name)
-    st.session_state.sport = st.selectbox("Sport", NFHS_SPORTS, index=0)
-    st.session_state.grade = st.selectbox("Current Grade", ["9th", "10th", "11th", "12th"], index=0)
-    st.session_state.gpa = st.text_input("Current GPA", st.session_state.gpa)
-    st.session_state.motivation = st.slider("Motivation Level", 1, 10, 5)
-    st.session_state.outreach = st.radio("Have you contacted any college coaches yet?", ["Yes", "No"])
+    st.subheader("📍 Step 1: Build Your Athletic Profile")
+
+    st.markdown("""
+    🧾 This is your **foundation**. Coaches and our AI agents use this info to personalize your recruiting plan.  
+    🎯 Fill in everything honestly — this becomes your blueprint.
+    """)
+
+    col1, col2 = st.columns(2)
+    with col1:
+        st.session_state.name = st.text_input("Full Name", st.session_state.name)
+        st.session_state.grade = st.selectbox("Current Grade Level", ["9th", "10th", "11th", "12th"], index=0)
+        st.session_state.gpa = st.text_input("GPA (e.g., 3.5)", st.session_state.gpa)
+        st.session_state.outreach = st.radio("Have you contacted college coaches yet?", ["Yes", "No"])
+    with col2:
+        st.session_state.sport = st.selectbox("Your Sport", NFHS_SPORTS, index=0)
+        st.session_state.motivation = st.slider("Motivation Level (1–10)", 1, 10, 5)
+        st.session_state.video_link = st.text_input("Highlight Video Link (optional)", st.session_state.video_link)
+
+    st.markdown("🔐 **Your Info is Saved** — Log in anytime to update or improve your profile.")
+
+    # Optional CTA or validation check
+    if all([st.session_state.name, st.session_state.gpa, st.session_state.sport]):
+        st.success("✅ Your profile is off to a strong start! Continue to the next step.")
+    else:
+        st.warning("⚠️ Fill in all key fields to unlock personalized recommendations.")
 
 # ✅ Step 2: Film Room
 with tab2:
