@@ -1,12 +1,12 @@
-def recommend_package(grade, motivation, outreach, gpa):
-    if motivation <= 4:
-        return "Role Player"
-    elif grade in ["11th", "12th", "Post-grad"] and motivation >= 8 and outreach == "Yes":
-        return "Captain"
-    elif gpa < 2.5:
-        return "Role Player"
+def recommend_package(score):
+    if score >= 80:
+        return "🏆 Captain Package – You're leading the game!"
+    elif score >= 60:
+        return "🔋 Starter Package – Solid potential with room to grow."
+    elif score >= 40:
+        return "⚙️ Role Player Package – Get support and rise up."
     else:
-        return "Starter"
+        return "📈 Let's Build – Start with development basics and work up."
 
 def calculate_strength_score(stat1, stat2, stat3):
     try:
