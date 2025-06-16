@@ -8,7 +8,7 @@ from dotenv import load_dotenv
 from utils.logic import recommend_package, calculate_strength_score
 from utils.summary import build_summary
 from utils.pdf_generator import generate_pdf_from_chat
-
+from utils.logic import recommend_package
 # Load API key
 load_dotenv()
 api_key = st.secrets.get("OPENAI_API_KEY") or os.getenv("OPENAI_API_KEY")
