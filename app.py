@@ -8,8 +8,11 @@ from dotenv import load_dotenv
 from utils.logic import recommend_package, calculate_strength_score
 from utils.summary import build_summary
 from utils.pdf_generator import generate_pdf_from_chat
-from utils.logic import recommend_package
+# UI Settings
+st.set_page_config(page_title="ScoutBot Recruiting Assistant", layout="wide")
+
 # Load API key
+# Load env + OpenAI
 load_dotenv()
 api_key = st.secrets.get("OPENAI_API_KEY") or os.getenv("OPENAI_API_KEY")
 if not api_key:
@@ -17,9 +20,6 @@ if not api_key:
     st.stop()
 openai.api_key = api_key
 client = openai.OpenAI()
-
-# UI Settings
-st.set_page_config(page_title="ScoutBot Recruiting Assistant", layout="wide")
 
 # Agent registry
 AGENTS = {
