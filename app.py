@@ -112,30 +112,52 @@ if all([st.session_state.name, st.session_state.gpa, st.session_state.sport]):
     st.image("https://cdn-icons-png.flaticon.com/512/3135/3135715.png", width=80, caption="Badge Earned")
 else:
     st.info("🔒 Complete all fields to earn your **Coach-View Ready** badge.")
-# ✅ Step 2: Film Room
+# Step 2: Film Room + AI Agent Chat
 with tab2:
-    selected_agent = st.session_state.selected_agent
     st.header(f"{AGENTS[selected_agent]['emoji']} Chat with {selected_agent}")
-    st.session_state.video_link = st.text_input("Highlight Video Link (YouTube, Hudl, etc.)", st.session_state.video_link)
+    st.subheader("🎥 Drop Your Film + Get Coaching Feedback")
+
+    st.session_state.video_link = st.text_input(
+        "Paste Your Highlight Video Link (YouTube, Hudl, etc.)",
+        st.session_state.video_link
+    )
+
     if st.session_state.video_link:
         st.video(st.session_state.video_link)
+        st.markdown("⬆️ Coaches prefer highlight videos to be under 4 minutes and start strong.")
 
-    user_input = st.chat_input(f"What do you want to ask {selected_agent}?")
+    # Optional: Switch agents from here too
+    with st.expander("🤖 Switch AI Coach for Film Review"):
+        for agent_name, agent_info in AGENTS.items():
+            if st.button(f"{agent_info['emoji']} {agent_name} (Switch Coach)", key=f"switch_{agent_name}"):
+                st.session_state.selected_agent = agent_name
+                st.session_state.messages = [{"role": "system", "content": AGENTS[agent_name]["system_prompt"]}]
+                st.experimental_rerun()
+
+    # AI chat box
+    user_input = st.chat_input(f"Ask {selected_agent} about your film, recruiting advice, or next steps...")
     if user_input:
         st.session_state.messages.append({"role": "user", "content": user_input})
-        with st.spinner(f"{selected_agent} is responding..."):
+        with st.spinner(f"{selected_agent} is reviewing..."):
             try:
-                response = ollama.chat(
-                    model="llama3",
+                response = client.chat.completions.create(
+                    model="gpt-4o",
                     messages=st.session_state.messages
                 )
-                reply = response["message"]["content"]
+                reply = response.choices[0].message.content
                 st.session_state.messages.append({"role": "assistant", "content": reply})
             except Exception as e:
-                st.error(f"🚫 Ollama chat failed: {e}")
+                st.error(f"🚫 AI Error: {e}")
+
+    # Display full chat thread
     for msg in st.session_state.messages[1:]:
         st.chat_message(msg["role"]).markdown(msg["content"])
 
+    # Summary Save Option
+    if st.button("💾 Save Agent Feedback Summary"):
+        summary_text = "\n".join([msg["content"] for msg in st.session_state.messages if msg["role"] == "assistant"])
+        generate_pdf_from_chat(summary_text, st.session_state.name or "athlete")
+        st.success("📄 PDF Summary Saved!")
 # Step 3: Coach Outreach
 with tab3:
     st.subheader("📬 Step 3: Coach Outreach")
