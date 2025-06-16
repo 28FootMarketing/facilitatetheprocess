@@ -148,12 +148,39 @@ with tab4:
 # Step 5: Match Finder
 with tab5:
     st.subheader("🔍 Step 5: Match Finder")
-    st.markdown("Input three key performance metrics for your sport (e.g., PPG, 40-yard dash, vertical jump).")
 
-    st.session_state.stat1 = st.text_input("Key Stat #1 (e.g., Points Per Game)", st.session_state.get("stat1", ""), key="stat_input_1")
-    st.session_state.stat2 = st.text_input("Key Stat #2 (e.g., 40-Yard Dash Time)", st.session_state.get("stat2", ""), key="stat_input_2")
-    st.session_state.stat3 = st.text_input("Key Stat #3 (e.g., Vertical Jump)", st.session_state.get("stat3", ""), key="stat_input_3")
+    # Define sport-specific stat labels
+    sport_stat_presets = {
+        "Basketball": ["Points Per Game", "Assists Per Game", "Rebounds Per Game"],
+        "Football": ["40-Yard Dash Time", "Bench Press Reps (185 lbs)", "Vertical Jump (inches)"],
+        "Soccer": ["Goals", "Assists", "Sprint Speed (20m)"],
+        "Track & Field": ["100m Time", "Long Jump Distance", "Shot Put Distance"],
+        "Wrestling": ["Win-Loss Record", "Pins", "Weight Class"],
+        "Volleyball": ["Kills Per Set", "Blocks Per Set", "Serving Aces"],
+        "Esports": ["K/D Ratio", "APM (Actions Per Minute)", "Accuracy %"],
+        "Girls Flag Football": ["40-Yard Dash", "Passing Yards", "Touchdowns"]
+    }
 
+    selected_sport = st.session_state.sport
+    default_labels = sport_stat_presets.get(selected_sport, ["Stat 1", "Stat 2", "Stat 3"])
+
+    # Customize stat labels option
+    st.markdown(f"### 📈 Stat Input for **{selected_sport}**")
+    custom_labels = st.checkbox("Customize stat labels?", key="custom_stat_toggle")
+
+    if custom_labels:
+        stat1_label = st.text_input("Custom Stat Label 1", default_labels[0], key="custom_stat1_label")
+        stat2_label = st.text_input("Custom Stat Label 2", default_labels[1], key="custom_stat2_label")
+        stat3_label = st.text_input("Custom Stat Label 3", default_labels[2], key="custom_stat3_label")
+    else:
+        stat1_label, stat2_label, stat3_label = default_labels
+
+    # Input stat values
+    st.session_state.stat1 = st.text_input(f"{stat1_label}", st.session_state.get("stat1", ""), key="sport_stat1")
+    st.session_state.stat2 = st.text_input(f"{stat2_label}", st.session_state.get("stat2", ""), key="sport_stat2")
+    st.session_state.stat3 = st.text_input(f"{stat3_label}", st.session_state.get("stat3", ""), key="sport_stat3")
+
+    # Score logic
     if st.session_state.stat1 and st.session_state.stat2 and st.session_state.stat3:
         try:
             score = calculate_strength_score(st.session_state.stat1, st.session_state.stat2, st.session_state.stat3)
@@ -163,7 +190,7 @@ with tab5:
         except Exception as e:
             st.error(f"❌ Error calculating match score: {e}")
     else:
-        st.warning("⚠️ Please enter all three stats to calculate your match strength.")
+        st.warning("⚠️ Please complete all three stat fields to calculate your match score.")
 
 # Step 6: Timeline Builder
 with tab6:
