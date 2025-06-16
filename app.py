@@ -89,7 +89,29 @@ with tab1:
         st.success("✅ Your profile is off to a strong start! Continue to the next step.")
     else:
         st.warning("⚠️ Fill in all key fields to unlock personalized recommendations.")
+# --- Coach-View Profile Preview ---
+st.markdown("---")
+st.markdown("### 🧑‍💼 Coach View Preview")
 
+with st.expander("🔍 See how a coach would see your intro profile"):
+    st.markdown(f"""
+    **🏷 Name**: `{st.session_state.name or 'Not entered'}`
+    
+    **🎯 Sport**: `{st.session_state.sport or 'Not selected'}`  
+    **📚 Grade**: `{st.session_state.grade or 'Not selected'}`  
+    **🎓 GPA**: `{st.session_state.gpa or 'Not entered'}`
+    
+    **🔥 Motivation Level**: `{st.session_state.motivation}`  
+    **📨 Contacted Coaches**: `{st.session_state.outreach}`  
+    **📽 Highlight Video**: {"[Watch here](" + st.session_state.video_link + ")" if st.session_state.video_link else "*None provided*"}
+    """)
+
+# --- Badge System Visual ---
+if all([st.session_state.name, st.session_state.gpa, st.session_state.sport]):
+    st.markdown("🏅 **Coach-View Ready Badge Unlocked**! Your profile is complete enough to be shared.")
+    st.image("https://cdn-icons-png.flaticon.com/512/3135/3135715.png", width=80, caption="Badge Earned")
+else:
+    st.info("🔒 Complete all fields to earn your **Coach-View Ready** badge.")
 # ✅ Step 2: Film Room
 with tab2:
     selected_agent = st.session_state.selected_agent
