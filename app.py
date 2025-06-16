@@ -294,48 +294,38 @@ with tab6:
 
     st.button("🔗 View Full Timeline Dashboard")
 
-# Step 7: Daily Tracker (Candace)
+# Step 7: Daily Tracker (Enhanced with Candace Assistant)
 with tab7:
-    st.subheader("📊 Step 7: Daily Tracker")
+    st.subheader("📊 Step 7: Daily Tracker — Stay On Track with Candace")
 
-    st.markdown("**📝 Daily Action Checklist**")
-    daily_checklist = [
-        "Sent follow-up email to a coach",
-        "Trained or conditioned today",
-        "Watched game film",
-        "Updated recruiting profile or video",
-        "Reviewed academic progress"
-    ]
-    completed_tasks = [st.checkbox(task) for task in daily_checklist]
-    task_count = sum(completed_tasks)
-    st.success(f"✅ {task_count} / {len(daily_checklist)} tasks completed today")
+    st.markdown("""
+    👟 **Every Day Counts.**
+    
+    Let Candace help you track the daily habits that move you closer to a scholarship.  
+    📲 *Remember: Staying consistent inside the platform means your data is always available to you — and your support team.*
 
-    st.markdown("---")
-    st.markdown("**📓 Daily Reflection Journal**")
-    st.session_state.mood = st.selectbox("Mood Today", ["😃 Great", "🙂 Okay", "😐 Meh", "😔 Struggling"])
-    st.session_state.reflection = st.text_area("What went well today? What needs work?")
+    🔄 You can reset this checklist each day to keep yourself focused.
+    """)
 
-    # Generate AI feedback using Dawn (Emotional Reset Agent)
-    if st.button("💬 Get Feedback from Dawn"):
-        with st.spinner("Dawn is reflecting..."):
-            response = client.chat.completions.create(
-                model="ollama/llama3",
-                messages=[
-                    {"role": "system", "content": AGENTS["Dawn"]["system_prompt"]},
-                    {"role": "user", "content": f"My mood today: {st.session_state.mood}. Reflection: {st.session_state.reflection}"}
-                ]
-            )
-            dawn_reply = response.choices[0].message.content.strip()
-            st.markdown(f"**🧘 Dawn says:**\n\n{dawn_reply}")
+    st.info("✅ *Use this tracker every day from your mobile or desktop — all activity stays inside your Facilitate The Process profile.*")
+
+    # Daily habit tracker
+    daily_checklist = {
+        "Followed up with a college coach": "📬",
+        "Watched a new recruiting video": "🎥",
+        "Improved your highlight video": "✂️",
+        "Trained or conditioned today": "💪",
+        "Logged a new stat or academic update": "🧠",
+        "Checked your recruiting timeline": "🗓️",
+    }
+
+    completed = []
+    for task, emoji in daily_checklist.items():
+        is_checked = st.checkbox(f"{emoji} {task}")
+        completed.append(is_checked)
+
+    st.success(f"📈 Tasks Completed Today: {sum(completed)} of {len(daily_checklist)}")
 
     st.markdown("---")
-    st.markdown("**📎 Export Today’s Summary**")
-    summary_text = f"""
-🗓️ Date: {datetime.now().strftime('%Y-%m-%d')}
-Mood: {st.session_state.mood}
-Tasks Completed: {task_count} / {len(daily_checklist)}
-
-Reflection:
-{st.session_state.reflection or 'N/A'}
-"""
-    st.download_button("📥 Download Tracker Summary", summary_text, file_name="daily_tracker_summary.txt")
+    st.markdown("🧭 **View Your Full Tracker Dashboard Inside Your Profile** *(syncs with your recruiting journey)*")
+    st.button("🔗 Go to Dashboard")
