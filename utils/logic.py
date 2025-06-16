@@ -9,10 +9,14 @@ def recommend_package(grade, motivation, outreach, gpa):
         return "Starter"
 
 def calculate_strength_score(stat1, stat2, stat3):
-    raw_score = (stat1 + stat2 + stat3) / 3
-    if raw_score >= 20:
-        return "Elite"
-    elif raw_score >= 10:
-        return "Competitive"
-    else:
-        return "Developing"
+    try:
+        # Convert inputs to float, default to 0 if conversion fails
+        s1 = float(stat1) if stat1 else 0
+        s2 = float(stat2) if stat2 else 0
+        s3 = float(stat3) if stat3 else 0
+
+        raw_score = (s1 + s2 + s3) / 3
+        return round(raw_score, 2)
+    except Exception as e:
+        print(f"⚠️ Error calculating strength score: {e}")
+        return 0
