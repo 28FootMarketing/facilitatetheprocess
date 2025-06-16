@@ -273,45 +273,26 @@ with st.expander("📊 What does my score and package mean?"):
 - **Developing Talent (📈)** → **Role Player Package**: Ideal for learning the process, building film, and getting reps.
 - **Growth Stage or Starter (🌱/🛠️)** → **Access Plan**: Self-paced recruiting assistant and educational support.
     """)
-# Step 6: Timeline Builder
+# Step 6: Timeline Builder (Enhanced)
 with tab6:
     st.subheader("📆 Step 6: Timeline Builder")
 
-    grade = st.session_state.grade
+    st.markdown("""
+    🛠️ **Plan Smart, Stay Connected**
+
+    Your recruiting timeline is only as powerful as the system you use to manage it.  
+    🎯 **Keep all your key milestones, communication records, and updates inside the Facilitate The Process platform**.
+
+    > 📌 *Avoid relying solely on personal notes or outside calendars—this platform keeps your process aligned, visible, and optimized.*
+    """)
+
     today = datetime.now().date()
+    eval_date = st.date_input("Coach Evaluation Date", today)
+    commit_date = st.date_input("Target Commitment Date")
 
-    # Suggested timeline dates by grade level
-    suggested_eval = {
-        "9th": today.replace(year=today.year + 1),
-        "10th": today.replace(year=today.year + 1, month=6),
-        "11th": today.replace(month=9),
-        "12th": today.replace(month=1),
-    }
+    st.success("✅ These milestones are saved and work best when monitored through your recruiting dashboard.")
 
-    suggested_commit = {
-        "9th": today.replace(year=today.year + 3, month=5),
-        "10th": today.replace(year=today.year + 2, month=5),
-        "11th": today.replace(year=today.year + 1, month=5),
-        "12th": today.replace(month=11),
-    }
-
-    st.markdown(f"📌 **Suggested Evaluation Date:** `{suggested_eval[grade]}`")
-    st.markdown(f"🎯 **Suggested Commitment Date:** `{suggested_commit[grade]}`")
-
-    # User entry for key dates
-    eval_date = st.date_input("🧐 Coach Evaluation Date", suggested_eval[grade])
-    commit_date = st.date_input("📝 Target Commitment Date", suggested_commit[grade])
-
-    # Visual representation of milestones
-    st.markdown("### 📍 Your Recruiting Milestone Timeline")
-    st.progress(0.25)
-    st.info("🔹 **Today** — Build your profile")
-    st.success(f"🔸 **{eval_date}** — Start coach outreach + evaluations")
-    st.warning(f"🔸 **{commit_date}** — College decision deadline")
-
-    # Optional PDF export
-    with st.expander("📄 Export Timeline as PDF"):
-        st.markdown("👉 Coming soon: Downloadable milestone planner PDF.")
+    st.button("🔗 View Full Timeline Dashboard")
 
 # Step 7: Daily Tracker (Candace)
 with tab7:
