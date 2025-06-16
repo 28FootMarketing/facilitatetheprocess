@@ -148,53 +148,22 @@ with tab4:
 # Step 5: Match Finder
 with tab5:
     st.subheader("🔍 Step 5: Match Finder")
+    st.markdown("Input three key performance metrics for your sport (e.g., PPG, 40-yard dash, vertical jump).")
 
-    st.markdown("**📊 Input 3 Key Stats for Your Sport**")
+    st.session_state.stat1 = st.text_input("Key Stat #1 (e.g., Points Per Game)", st.session_state.get("stat1", ""), key="stat_input_1")
+    st.session_state.stat2 = st.text_input("Key Stat #2 (e.g., 40-Yard Dash Time)", st.session_state.get("stat2", ""), key="stat_input_2")
+    st.session_state.stat3 = st.text_input("Key Stat #3 (e.g., Vertical Jump)", st.session_state.get("stat3", ""), key="stat_input_3")
 
-    st.session_state.stat_label1 = st.text_input("Stat Label 1 (e.g., Points per Game)", st.session_state.get("stat_label1", ""))
-    st.session_state.stat1 = st.text_input("Value", st.session_state.get("stat1", ""))
-
-    st.session_state.stat_label2 = st.text_input("Stat Label 2 (e.g., Assists)", st.session_state.get("stat_label2", ""))
-    st.session_state.stat2 = st.text_input("Value", st.session_state.get("stat2", ""))
-
-    st.session_state.stat_label3 = st.text_input("Stat Label 3 (e.g., Rebounds)", st.session_state.get("stat_label3", ""))
-    st.session_state.stat3 = st.text_input("Value", st.session_state.get("stat3", ""))
-
-    # Input validation
-    try:
-        s1 = float(st.session_state.stat1)
-        s2 = float(st.session_state.stat2)
-        s3 = float(st.session_state.stat3)
-        score = calculate_strength_score(s1, s2, s3)
-        package = recommend_package(score)
-
-        st.markdown(f"**📈 Match Strength Score:** `{score:.1f}`")
-        st.markdown(f"**🎯 Recommended Package:** `{package}`")
-
-        st.progress(min(score / 10, 1.0))
-
-        if st.button("🔮 Ask Agent Magic for Matching Advice"):
-            with st.spinner("Magic is reviewing your profile..."):
-                msg = (
-                    f"My sport is {st.session_state.sport}. "
-                    f"My stats are {st.session_state.stat_label1}: {s1}, "
-                    f"{st.session_state.stat_label2}: {s2}, {st.session_state.stat_label3}: {s3}. "
-                    f"My match score is {score}. Recommend how to improve my recruiting chances."
-                )
-
-                response = client.chat.completions.create(
-                    model="ollama/llama3",
-                    messages=[
-                        {"role": "system", "content": AGENTS["Magic"]["system_prompt"]},
-                        {"role": "user", "content": msg}
-                    ]
-                )
-                match_advice = response.choices[0].message.content.strip()
-                st.success("✨ Magic says:")
-                st.markdown(match_advice)
-
-    except ValueError:
-        st.warning("🚫 Please enter numeric values for all stats.")
+    if st.session_state.stat1 and st.session_state.stat2 and st.session_state.stat3:
+        try:
+            score = calculate_strength_score(st.session_state.stat1, st.session_state.stat2, st.session_state.stat3)
+            package = recommend_package(score)
+            st.success(f"🏅 Match Strength Score: **{score}**")
+            st.info(f"📦 Recommended Recruiting Package: **{package}**")
+        except Exception as e:
+            st.error(f"❌ Error calculating match score: {e}")
+    else:
+        st.warning("⚠️ Please enter all three stats to calculate your match strength.")
 
 # Step 6: Timeline Builder
 with tab6:
