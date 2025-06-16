@@ -62,7 +62,13 @@ tab1, tab2, tab3, tab4, tab5, tab6, tab7 = st.tabs([
 with tab1:
     st.subheader("📍 Step 1: Profile Setup")
     st.session_state.name = st.text_input("Athlete Name", st.session_state.name)
-    st.session_state.sport = st.selectbox("Sport", ["Basketball", "Football", "Soccer", "Track", "Volleyball"], index=0)
+    st.session_state.sport = st.selectbox("Sport", [
+    "Baseball", "Basketball", "Bowling", "Cheerleading", "Cross Country", "Dance",
+    "Esports", "Field Hockey", "Football", "Girls Flag Football", "Golf",
+    "Gymnastics", "Ice Hockey", "Lacrosse", "Skiing", "Soccer", "Softball",
+    "Spirit", "Swimming & Diving", "Tennis", "Track & Field", "Volleyball",
+    "Water Polo", "Weightlifting", "Wrestling"
+], index=0)
     st.session_state.grade = st.selectbox("Current Grade", ["9th", "10th", "11th", "12th"], index=0)
     st.session_state.gpa = st.text_input("Current GPA", st.session_state.gpa)
     st.session_state.motivation = st.slider("Motivation Level", 1, 10, 5)
